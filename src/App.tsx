@@ -1,12 +1,24 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
-import { Post, Comment } from './types';
+
+// 타입 정의
+interface Comment {
+  id: number;
+  text: string;
+}
+
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  comments: Comment[];
+}
 
 // 더미 데이터
 const initialPosts: Post[] = [
-  { id: 1, title: '첫 번째 게시글', content: '첫 번째 게시글의 본문입니다.', comments: [{ id: 1, text: '첫 번째 댓글' }] },
+  { id: 1, title: '첫 번째 게시글', content: '첫 번째 게시글의 본문입니다.', comments: [{ id: 1, text: '첫 번째 댓글입니다.' }] },
   { id: 2, title: '두 번째 게시글', content: '두 번째 게시글의 본문입니다.', comments: [] },
-  { id: 3, title: '세 번째 게시글', content: '세 번째 게시글의 본문입니다.', comments: [{ id: 2, text: '댓글 예시' }] },
+  { id: 3, title: '세 번째 게시글', content: '세 번째 게시글의 본문입니다.', comments: [{ id: 2, text: '댓글 예시입니다.' }] },
   { id: 4, title: '네 번째 게시글', content: '네 번째 게시글의 본문입니다.', comments: [] },
   { id: 5, title: '다섯 번째 게시글', content: '다섯 번째 게시글의 본문입니다.', comments: [] },
   { id: 6, title: '여섯 번째 게시글', content: '여섯 번째 게시글의 본문입니다.', comments: [] },
@@ -15,14 +27,15 @@ const initialPosts: Post[] = [
 // 헤더 컴포넌트
 function Header() {
   return (
-    <header className="py-4 border-b border-gray-300">
+    <header className="py-4 border-b border-black">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="w-24"></div> {/* 좌측 여백 */}
-        <Link to="/" className="text-xl font-semibold text-all-black">미니 블로그</Link>
+        <h1 className="text-xl font-semibold" style={{ color: 'black' }}>미니 블로그</h1>
         <div className="w-24 flex justify-end">
           <Link
             to="/create"
-            className="btn-black px-3 py-1 rounded-md text-sm"
+            className="rounded-lg py-1 px-3 text-sm"
+            style={{ backgroundColor: 'black', color: 'white' }}
           >
             글 작성하기
           </Link>
@@ -40,9 +53,17 @@ function PostList({ posts }: { posts: Post[] }) {
         <Link 
           key={post.id}
           to={`/post/${post.id}`}
-          className="block border border-gray-300 rounded-lg p-4 mb-6 cursor-pointer hover:bg-gray-50"
+          style={{ 
+            display: 'block',
+            border: '1px solid black',
+            borderRadius: '0.5rem',
+            padding: '1rem',
+            marginBottom: '1rem',
+            cursor: 'pointer',
+            textDecoration: 'none'
+          }}
         >
-          <h2 className="text-base leading-none text-all-black">{post.title}</h2>
+          <h2 style={{ fontSize: '1rem', lineHeight: '1', color: 'black' }}>{post.title}</h2>
         </Link>
       ))}
     </div>
@@ -57,7 +78,7 @@ function PostDetail({ posts, onAddComment }: { posts: Post[], onAddComment: (pos
   const [commentText, setCommentText] = useState('');
 
   if (!post) {
-    return <div className="max-w-[600px] mx-auto">포스트를 찾을 수 없습니다.</div>;
+    return <div className="max-w-[600px] mx-auto" style={{ color: 'black' }}>포스트를 찾을 수 없습니다.</div>;
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -71,30 +92,41 @@ function PostDetail({ posts, onAddComment }: { posts: Post[], onAddComment: (pos
   return (
     <div className="max-w-[600px] mx-auto">
       <button 
-        className="mb-4 text-all-black hover:text-all-black flex items-center"
+        className="mb-4 flex items-center"
+        style={{ color: 'black', background: 'none', border: 'none', cursor: 'pointer' }}
         onClick={() => navigate('/')}
       >
         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        목록으로 돌아가기
+        <span style={{ color: 'black' }}>목록으로 돌아가기</span>
       </button>
 
-      <div className="border border-gray-300 rounded-lg p-4 mb-6">
-        <h1 className="text-xl font-semibold mb-4 text-all-black">{post.title}</h1>
-        <p className="text-all-black">{post.content}</p>
+      <div style={{ 
+        border: '1px solid black',
+        borderRadius: '0.5rem',
+        padding: '1rem',
+        marginBottom: '1.5rem'
+      }}>
+        <h1 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', color: 'black' }}>{post.title}</h1>
+        <p style={{ color: 'black' }}>{post.content}</p>
       </div>
 
       <div className="mb-6">
-        <h2 className="text-lg font-medium mb-3 text-all-black">댓글</h2>
+        <h2 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.75rem', color: 'black' }}>댓글</h2>
         {post.comments.length > 0 ? (
           post.comments.map(comment => (
-            <div key={comment.id} className="border border-gray-300 rounded-lg p-3 mb-2">
-              <p className="text-all-black">{comment.text}</p>
+            <div key={comment.id} style={{ 
+              border: '1px solid black',
+              borderRadius: '0.5rem',
+              padding: '0.75rem',
+              marginBottom: '0.5rem'
+            }}>
+              <p style={{ color: 'black' }}>{comment.text}</p>
             </div>
           ))
         ) : (
-          <p className="text-all-black">아직 댓글이 없습니다.</p>
+          <p style={{ color: 'black' }}>아직 댓글이 없습니다.</p>
         )}
       </div>
 
@@ -104,11 +136,25 @@ function PostDetail({ posts, onAddComment }: { posts: Post[], onAddComment: (pos
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           placeholder="댓글을 입력하세요"
-          className="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
+          style={{ 
+            flex: '1',
+            border: '1px solid black',
+            borderTopLeftRadius: '0.5rem',
+            borderBottomLeftRadius: '0.5rem',
+            padding: '0.5rem 0.75rem',
+            outline: 'none'
+          }}
         />
         <button
           type="submit"
-          className="btn-black px-4 py-2 rounded-r-lg"
+          style={{ 
+            backgroundColor: 'black',
+            color: 'white',
+            padding: '0.5rem 1rem',
+            borderTopRightRadius: '0.5rem',
+            borderBottomRightRadius: '0.5rem',
+            border: 'none'
+          }}
         >
           등록
         </button>
@@ -134,9 +180,9 @@ function CreatePost({ onAddPost }: { onAddPost: (title: string, content: string)
   return (
     <div className="max-w-[600px] mx-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-all-black">글 작성하기</h2>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'black' }}>글 작성하기</h2>
         <button 
-          className="text-all-black hover:text-all-black"
+          style={{ color: 'black', background: 'none', border: 'none', cursor: 'pointer' }}
           onClick={() => navigate('/')}
         >
           취소
@@ -145,7 +191,7 @@ function CreatePost({ onAddPost }: { onAddPost: (title: string, content: string)
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="title" className="block text-sm font-medium text-all-black mb-1">
+          <label htmlFor="title" style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: 'black', marginBottom: '0.25rem' }}>
             제목
           </label>
           <input
@@ -153,21 +199,34 @@ function CreatePost({ onAddPost }: { onAddPost: (title: string, content: string)
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
+            style={{ 
+              width: '100%',
+              border: '1px solid black',
+              borderRadius: '0.5rem',
+              padding: '0.5rem 0.75rem',
+              outline: 'none'
+            }}
             placeholder="제목을 입력하세요"
             required
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="content" className="block text-sm font-medium text-all-black mb-1">
+          <label htmlFor="content" style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: 'black', marginBottom: '0.25rem' }}>
             내용
           </label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-black focus:border-black min-h-[150px]"
+            style={{ 
+              width: '100%',
+              border: '1px solid black',
+              borderRadius: '0.5rem',
+              padding: '0.5rem 0.75rem',
+              outline: 'none',
+              minHeight: '150px'
+            }}
             placeholder="내용을 입력하세요"
             required
           />
@@ -176,14 +235,29 @@ function CreatePost({ onAddPost }: { onAddPost: (title: string, content: string)
         <div className="flex justify-end space-x-2">
           <button
             type="button"
-            className="px-4 py-2 border border-gray-300 rounded-md text-all-black hover:bg-gray-50"
+            style={{ 
+              padding: '0.5rem 1rem',
+              border: '1px solid black',
+              borderRadius: '0.375rem',
+              color: 'black',
+              marginRight: '0.5rem',
+              background: 'white',
+              cursor: 'pointer'
+            }}
             onClick={() => navigate('/')}
           >
             취소
           </button>
           <button
             type="submit"
-            className="btn-black px-4 py-2 rounded-md"
+            style={{ 
+              padding: '0.5rem 1rem',
+              backgroundColor: 'black',
+              color: 'white',
+              borderRadius: '0.375rem',
+              border: 'none',
+              cursor: 'pointer'
+            }}
           >
             등록
           </button>
@@ -229,7 +303,7 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-white">
+      <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
         <Header />
         <main className="container mx-auto px-4 py-8">
           <Routes>
